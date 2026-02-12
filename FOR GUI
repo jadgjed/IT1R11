@@ -1,0 +1,33 @@
+while True:
+    ID = input("What is your Student ID: ")
+    Name = input("What is your name: ")
+    Course = input("Enter your Course: ")
+    Subject = input("What is the subject: ")
+    Prelim = int(input("Enter your Preliminary Exam Grades: "))
+    Midterm = int(input("Enter your Midterm Exam Grades: "))
+    Final = int(input("Enter your Final Exam Grades: "))
+    
+    Average = (Prelim * 0.20) + (Midterm * 0.30) + (Final * 0.50)
+    
+    print("------------------------")
+    print("Student ID: ", ID)
+    print("Student Name: ", Name)
+    print("Student Course: ", Course)
+    print("Student Subject: ", Subject)
+    print("Preliminary Exam Grade: ", Prelim)
+    print("Midterm Exam Grade: ", Midterm)
+    print("Final Exam Grade: ", Final)
+    print(f"General Weighted Average: {Average:.2f}: ")
+    
+    if Average >= 75:
+        print("Remarks: PASSED")
+    else:
+        print("Remarks: FAILED")
+        
+    print("------------------------")
+    
+    choice = input("Do you want to enter another student profile? (yes/no): ")
+    
+    if choice == 'no':
+        print("Program Terminated. Thanks for using!!")
+        break
