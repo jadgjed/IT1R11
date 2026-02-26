@@ -1,0 +1,96 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# ---------------- FUNCTION ---------------- #
+
+def calculate():
+    try:
+        # Get values
+        student_id = entry_id.get()
+        name = entry_name.get()
+        course = entry_course.get()
+        subject = entry_subject.get()
+
+        prelim = float(entry_prelim.get())
+        midterm = float(entry_midterm.get())
+        final = float(entry_final.get())
+
+        # Check empty fields
+        if student_id == "" or name == "" or course == "" or subject == "":
+            messagebox.showerror("Error", "Please fill all fields.")
+            return
+
+        # Compute average
+        average = (prelim * 0.20) + (midterm * 0.30) + (final * 0.50)
+
+        # Determine remarks
+        if average >= 75:
+            remarks = "PASSED"
+        else:
+            remarks = "FAILED"
+
+        # Display result
+        result = (
+            "Student ID: " + student_id + "\n"
+            "Name: " + name + "\n"
+            "Course: " + course + "\n"
+            "Subject: " + subject + "\n"
+            "Average: " + str(round(average, 2)) + "\n"
+            "Remarks: " + remarks + "\n"
+            "---------------------------\n"
+        )
+
+        output.insert(tk.END, result)
+
+    except:
+        messagebox.showerror("Error", "Invalid grade input.")
+
+# ---------------- WINDOW ---------------- #
+
+root = tk.Tk()
+root.title("Student Grading System")
+root.geometry("500x550")
+root.resizable(False, False)
+
+tk.Label(root, text="STUDENT GRADING SYSTEM", font=("Arial", 14, "bold")).pack(pady=10)
+
+frame = tk.Frame(root)
+frame.pack()
+
+# Labels and Entries
+tk.Label(frame, text="Student ID").grid(row=0, column=0)
+entry_id = tk.Entry(frame)
+entry_id.grid(row=0, column=1)
+
+tk.Label(frame, text="Name").grid(row=1, column=0)
+entry_name = tk.Entry(frame)
+entry_name.grid(row=1, column=1)
+
+tk.Label(frame, text="Course").grid(row=2, column=0)
+entry_course = tk.Entry(frame)
+entry_course.grid(row=2, column=1)
+
+tk.Label(frame, text="Subject").grid(row=3, column=0)
+entry_subject = tk.Entry(frame)
+entry_subject.grid(row=3, column=1)
+
+tk.Label(frame, text="Prelim (20%)").grid(row=4, column=0)
+entry_prelim = tk.Entry(frame)
+entry_prelim.grid(row=4, column=1)
+
+tk.Label(frame, text="Midterm (30%)").grid(row=5, column=0)
+entry_midterm = tk.Entry(frame)
+entry_midterm.grid(row=5, column=1)
+
+tk.Label(frame, text="Final (50%)").grid(row=6, column=0)
+entry_final = tk.Entry(frame)
+entry_final.grid(row=6, column=1)
+
+# Button
+tk.Button(root, text="Calculate", command=calculate).pack(pady=10)
+
+# Output Text Area
+output = tk.Text(root, height=12, width=55)
+output.pack(pady=10)
+
+root.mainloop()
