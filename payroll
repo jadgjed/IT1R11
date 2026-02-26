@@ -1,0 +1,133 @@
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+
+# ---------------- FUNCTIONS ---------------- #
+
+def compute_payroll():
+    try:
+        emp_no = entry_emp_no.get()
+        emp_name = entry_emp_name.get()
+        rate = float(entry_rate.get())
+        days = float(entry_days.get())
+        overtime_hours = float(entry_ot.get())
+        sss = float(entry_sss.get())
+        philhealth = float(entry_philhealth.get())
+        pagibig = float(entry_pagibig.get())
+
+        if emp_no == "" or emp_name == "":
+            messagebox.showerror("Error", "Please fill all required fields.")
+            return
+
+        # Computation
+        basic_pay = rate * days
+        overtime_pay = overtime_hours * (rate / 1.25)
+        gross_pay = basic_pay + overtime_pay
+        tax = gross_pay * 0.10
+        total_deductions = sss + philhealth + pagibig + tax
+        net_pay = gross_pay - total_deductions
+
+        lbl_basic_value.config(text=f"{basic_pay:.2f}")
+        lbl_gross_value.config(text=f"{gross_pay:.2f}")
+        lbl_deduction_value.config(text=f"{total_deductions:.2f}")
+        lbl_net_value.config(text=f"{net_pay:.2f}")
+
+    except ValueError:
+        messagebox.showerror("Error", "Please enter valid numbers.")
+
+
+def clear_fields():
+    entry_emp_no.delete(0, tk.END)
+    entry_emp_name.delete(0, tk.END)
+    entry_rate.delete(0, tk.END)
+    entry_days.delete(0, tk.END)
+    entry_ot.delete(0, tk.END)
+    entry_sss.delete(0, tk.END)
+    entry_philhealth.delete(0, tk.END)
+    entry_pagibig.delete(0, tk.END)
+
+    lbl_basic_value.config(text="0.00")
+    lbl_gross_value.config(text="0.00")
+    lbl_deduction_value.config(text="0.00")
+    lbl_net_value.config(text="0.00")
+
+
+# ---------------- WINDOW ---------------- #
+
+root = tk.Tk()
+root.title("Employee Payroll System")
+root.geometry("600x600")
+root.resizable(False, False)
+
+# Title
+title = tk.Label(root, text="EMPLOYEE PAYROLL SYSTEM", font=("Arial", 18, "bold"))
+title.pack(pady=10)
+
+frame = tk.Frame(root)
+frame.pack(pady=10)
+
+# ---------------- INPUTS ---------------- #
+
+tk.Label(frame, text="Employee No:").grid(row=0, column=0, sticky="w")
+entry_emp_no = tk.Entry(frame)
+entry_emp_no.grid(row=0, column=1)
+
+tk.Label(frame, text="Employee Name:").grid(row=1, column=0, sticky="w")
+entry_emp_name = tk.Entry(frame)
+entry_emp_name.grid(row=1, column=1)
+
+tk.Label(frame, text="Rate per Day:").grid(row=2, column=0, sticky="w")
+entry_rate = tk.Entry(frame)
+entry_rate.grid(row=2, column=1)
+
+tk.Label(frame, text="Days Worked:").grid(row=3, column=0, sticky="w")
+entry_days = tk.Entry(frame)
+entry_days.grid(row=3, column=1)
+
+tk.Label(frame, text="Overtime Hours:").grid(row=4, column=0, sticky="w")
+entry_ot = tk.Entry(frame)
+entry_ot.grid(row=4, column=1)
+
+tk.Label(frame, text="SSS:").grid(row=5, column=0, sticky="w")
+entry_sss = tk.Entry(frame)
+entry_sss.grid(row=5, column=1)
+
+tk.Label(frame, text="PhilHealth:").grid(row=6, column=0, sticky="w")
+entry_philhealth = tk.Entry(frame)
+entry_philhealth.grid(row=6, column=1)
+
+tk.Label(frame, text="Pag-IBIG:").grid(row=7, column=0, sticky="w")
+entry_pagibig = tk.Entry(frame)
+entry_pagibig.grid(row=7, column=1)
+
+# ---------------- BUTTONS ---------------- #
+
+btn_frame = tk.Frame(root)
+btn_frame.pack(pady=15)
+
+tk.Button(btn_frame, text="Compute", width=12, command=compute_payroll).grid(row=0, column=0, padx=5)
+tk.Button(btn_frame, text="Clear", width=12, command=clear_fields).grid(row=0, column=1, padx=5)
+tk.Button(btn_frame, text="Exit", width=12, command=root.quit).grid(row=0, column=2, padx=5)
+
+# ---------------- OUTPUT ---------------- #
+
+result_frame = tk.Frame(root)
+result_frame.pack(pady=10)
+
+tk.Label(result_frame, text="Basic Pay:").grid(row=0, column=0, sticky="w")
+lbl_basic_value = tk.Label(result_frame, text="0.00")
+lbl_basic_value.grid(row=0, column=1)
+
+tk.Label(result_frame, text="Gross Pay:").grid(row=1, column=0, sticky="w")
+lbl_gross_value = tk.Label(result_frame, text="0.00")
+lbl_gross_value.grid(row=1, column=1)
+
+tk.Label(result_frame, text="Total Deductions:").grid(row=2, column=0, sticky="w")
+lbl_deduction_value = tk.Label(result_frame, text="0.00")
+lbl_deduction_value.grid(row=2, column=1)
+
+tk.Label(result_frame, text="Net Pay:").grid(row=3, column=0, sticky="w")
+lbl_net_value = tk.Label(result_frame, text="0.00")
+lbl_net_value.grid(row=3, column=1)
+
+root.mainloop()
