@@ -1,0 +1,147 @@
+# Tkinter-Based Student Grading System
+# Developed for Laboratory Activity
+# This program computes the weighted average of student grades
+# using Prelim (30%), Midterm (30%), and Final (40%)
+
+import tkinter as tk
+from tkinter import messagebox
+
+# ---------- FUNCTIONS ----------
+
+def compute_grade():
+    try:
+        # Get input values
+        prelim = float(entry_prelim.get())
+        midterm = float(entry_midterm.get())
+        final = float(entry_final.get())
+
+        # Input validation for grade range
+        if not (0 <= prelim <= 100 and 0 <= midterm <= 100 and 0 <= final <= 100):
+            messagebox.showerror("Invalid Input", "Grades must be between 0 and 100.")
+            return
+
+        # Weighted average formula
+        average = (prelim * 0.30) + (midterm * 0.30) + (final * 0.40)
+
+        # Determine numerical value and remark
+        if average >= 95:
+            numerical = "1.00"
+            remark = "Excellent"
+        elif average >= 90:
+            numerical = "1.25"
+            remark = "Very Good"
+        elif average >= 85:
+            numerical = "1.50"
+            remark = "Above Average"
+        elif average >= 80:
+            numerical = "2.00"
+            remark = "Average"
+        elif average >= 75:
+            numerical = "2.50"
+            remark = "Passing"
+        elif average >= 70:
+            numerical = "3.00"
+            remark = "Conditional"
+        else:
+            numerical = "5.00"
+            remark = "Failed"
+
+        # Display results
+        lbl_average.config(text=f"{average:.2f}")
+        lbl_numerical.config(text=numerical)
+        lbl_remark.config(text=remark)
+
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid numeric grades.")
+
+
+def clear_fields():
+    # Clear all entry fields and results
+    entry_id.delete(0, tk.END)
+    entry_name.delete(0, tk.END)
+    entry_course.delete(0, tk.END)
+    entry_subject.delete(0, tk.END)
+    entry_prelim.delete(0, tk.END)
+    entry_midterm.delete(0, tk.END)
+    entry_final.delete(0, tk.END)
+
+    lbl_average.config(text="")
+    lbl_numerical.config(text="")
+    lbl_remark.config(text="")
+
+
+# ---------- GUI DESIGN ----------
+
+window = tk.Tk()
+window.title("Student Grading System")
+window.geometry("500x550")
+window.resizable(False, False)
+
+# Title
+tk.Label(window, text="Student Grading System",
+         font=("Arial", 16, "bold")).pack(pady=10)
+
+# ---------- STUDENT INFO ----------
+frame_info = tk.Frame(window)
+frame_info.pack(pady=5)
+
+tk.Label(frame_info, text="Student ID").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+entry_id = tk.Entry(frame_info)
+entry_id.grid(row=0, column=1)
+
+tk.Label(frame_info, text="Student Name").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+entry_name = tk.Entry(frame_info)
+entry_name.grid(row=1, column=1)
+
+tk.Label(frame_info, text="Course").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+entry_course = tk.Entry(frame_info)
+entry_course.grid(row=2, column=1)
+
+tk.Label(frame_info, text="Subject").grid(row=3, column=0, padx=5, pady=5, sticky="e")
+entry_subject = tk.Entry(frame_info)
+entry_subject.grid(row=3, column=1)
+
+# ---------- GRADES ----------
+frame_grades = tk.Frame(window)
+frame_grades.pack(pady=10)
+
+tk.Label(frame_grades, text="Prelim").grid(row=0, column=0, padx=5, pady=5)
+entry_prelim = tk.Entry(frame_grades, width=10)
+entry_prelim.grid(row=0, column=1)
+
+tk.Label(frame_grades, text="Midterm").grid(row=1, column=0, padx=5, pady=5)
+entry_midterm = tk.Entry(frame_grades, width=10)
+entry_midterm.grid(row=1, column=1)
+
+tk.Label(frame_grades, text="Final").grid(row=2, column=0, padx=5, pady=5)
+entry_final = tk.Entry(frame_grades, width=10)
+entry_final.grid(row=2, column=1)
+
+# ---------- BUTTONS ----------
+frame_buttons = tk.Frame(window)
+frame_buttons.pack(pady=10)
+
+tk.Button(frame_buttons, text="Compute",
+          width=12, command=compute_grade).grid(row=0, column=0, padx=10)
+
+tk.Button(frame_buttons, text="Clear",
+          width=12, command=clear_fields).grid(row=0, column=1, padx=10)
+
+# ---------- RESULTS ----------
+frame_results = tk.Frame(window)
+frame_results.pack(pady=15)
+
+tk.Label(frame_results, text="Computed Average:").grid(row=0, column=0, sticky="e")
+lbl_average = tk.Label(frame_results, text="", width=10, relief="sunken")
+lbl_average.grid(row=0, column=1)
+
+tk.Label(frame_results, text="Numerical Value:").grid(row=1, column=0, sticky="e")
+lbl_numerical = tk.Label(frame_results, text="", width=10, relief="sunken")
+lbl_numerical.grid(row=1, column=1)
+
+tk.Label(frame_results, text="Remark:").grid(row=2, column=0, sticky="e")
+lbl_remark = tk.Label(frame_results, text="", width=15, relief="sunken")
+lbl_remark.grid(row=2, column=1)
+
+# ---------- RUN PROGRAM ----------
+window.mainloop()
