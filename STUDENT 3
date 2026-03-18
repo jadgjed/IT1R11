@@ -1,0 +1,196 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+# ---------------- DATA ---------------- #
+students_data = [] # To store all saved student info
+
+# ---------------- FUNCTIONS ---------------- #
+
+def compute_grade():
+try:
+prelim = float(entry_prelim.get())
+midterm = float(entry_midterm.get())
+final = float(entry_final.get())
+
+if not all(0 <= grade <= 100 for grade in [prelim, midterm, final]):
+messagebox.showerror("Invalid Input", "Grades must be between 0 and 100")
+return
+
+average = (prelim * 0.30) + (midterm * 0.30) + (final * 0.40)
+
+if 97 <= average <= 100:
+numerical, remark = "1.00", "Excellent"
+elif 94 <= average <= 96:
+numerical, remark = "1.25", "Excellent"
+elif 91 <= average <= 93:
+numerical, remark = "1.50", "Very Good"
+elif 88 <= average <= 90:
+numerical, remark = "1.75", "Very Good"
+elif 85 <= average <= 87:
+numerical, remark = "2.00", "Above Average"
+elif 82 <= average <= 84:
+numerical, remark = "2.25", "Above Average"
+elif 79 <= average <= 81:
+numerical, remark = "2.50", "Average"
+elif 76 <= average <= 78:
+numerical, remark = "2.75", "Average"
+
+elif average == 75:
+numerical, remark = "3.00", "Passing"
+elif 72 <= average <= 74:
+numerical, remark = "3.25", "Conditional"
+elif 69 <= average <= 71:
+numerical, remark = "3.50", "Conditional"
+elif 66 <= average <= 68:
+numerical, remark = "3.75", "Failed"
+elif average == 65:
+numerical, remark = "4.00", "Failed"
+else:
+numerical, remark = "5.00", "Failed"
+
+label_average.config(text=f"{average:.2f}")
+label_numerical.config(text=numerical)
+label_remark.config(text=remark)
+
+except ValueError:
+messagebox.showerror("Error", "Please enter valid numeric grades")
+
+def clear_fields():
+entry_id.delete(0, tk.END)
+entry_name.delete(0, tk.END)
+entry_subject.delete(0, tk.END)
+entry_prelim.delete(0, tk.END)
+entry_midterm.delete(0, tk.END)
+entry_final.delete(0, tk.END)
+combo_course.current(0)
+label_average.config(text="")
+label_numerical.config(text="")
+label_remark.config(text="")
+
+def save_student():
+# Make sure compute_grade is done first
+if label_average.cget("text") == "":
+messagebox.showerror("Error", "Please compute the grade first")
+return
+
+student = {
+"Student ID": entry_id.get(),
+"Student Name": entry_name.get(),
+"Course": combo_course.get(),
+"Subject": entry_subject.get(),
+"Prelim": entry_prelim.get(),
+"Midterm": entry_midterm.get(),
+"Final": entry_final.get(),
+"Average": label_average.cget("text"),
+"Numerical": label_numerical.cget("text"),
+"Remark": label_remark.cget("text")
+}
+students_data.append(student)
+messagebox.showinfo("Saved", "Student data saved successfully!")
+
+def show_data():
+if not students_data:
+messagebox.showinfo("No Data", "No student data saved yet!")
+return
+
+data_window = tk.Toplevel(root)
+data_window.title("Saved Student Data")
+data_window.geometry("900x400")
+
+tree = ttk.Treeview(data_window)
+tree.pack(fill=tk.BOTH, expand=True)
+
+# Define columns
+columns = ["Student ID", "Student Name", "Course", "Subject", "Prelim", "Midterm", "Final", "Average",
+"Numerical", "Remark"]
+tree["columns"] = columns
+tree["show"] = "headings"
+
+for col in columns:
+tree.heading(col, text=col)
+tree.column(col, width=80, anchor="center")
+
+# Insert data
+for student in students_data:
+tree.insert("", tk.END, values=[student[col] for col in columns])
+
+# Optional: Print course selection
+def course_selected(event):
+print("Selected course:", combo_course.get())
+
+# ---------------- WINDOW ---------------- #
+
+root = tk.Tk()
+root.title("Student Grading System")
+root.geometry("550x500")
+root.resizable(False, False)
+
+# Title
+title = tk.Label(root, text="Student Grading System", font=("Arial", 16, "bold"))
+title.grid(row=0, column=0, columnspan=2, pady=10)
+
+# ---------------- INPUT FIELDS ---------------- #
+tk.Label(root, text="Student ID").grid(row=1, column=0, sticky="w", padx=10, pady=5)
+entry_id = tk.Entry(root, width=30)
+entry_id.grid(row=1, column=1)
+
+tk.Label(root, text="Student Name").grid(row=2, column=0, sticky="w", padx=10, pady=5)
+entry_name = tk.Entry(root, width=30)
+entry_name.grid(row=2, column=1)
+
+tk.Label(root, text="Course").grid(row=3, column=0, sticky="w", padx=10, pady=5)
+combo_course = ttk.Combobox(root, width=27, state="readonly")
+combo_course['values'] = (
+"BTLED","BTVTEd","BSA","BSCE","BSECE","BSEE","BSME",
+"BSCpE","BSGE","BSDS","BSIT","BSTCM","BSAP","BSAM",
+"BSCHEM","BSES","BSFT","BSAUTOTRONICS","BSET",
+"BSESM","BSEMT","BSMET","BSCS"
+)
+combo_course.current(0)
+
+combo_course.grid(row=3, column=1)
+combo_course.bind("<<ComboboxSelected>>", course_selected)
+
+tk.Label(root, text="Subject").grid(row=4, column=0, sticky="w", padx=10, pady=5)
+entry_subject = tk.Entry(root, width=30)
+entry_subject.grid(row=4, column=1)
+
+tk.Label(root, text="Prelim Grade").grid(row=5, column=0, sticky="w", padx=10, pady=5)
+entry_prelim = tk.Entry(root, width=30)
+entry_prelim.grid(row=5, column=1)
+
+tk.Label(root, text="Midterm Grade").grid(row=6, column=0, sticky="w", padx=10, pady=5)
+entry_midterm = tk.Entry(root, width=30)
+entry_midterm.grid(row=6, column=1)
+
+tk.Label(root, text="Final Grade").grid(row=7, column=0, sticky="w", padx=10, pady=5)
+entry_final = tk.Entry(root, width=30)
+entry_final.grid(row=7, column=1)
+
+# ---------------- BUTTONS ---------------- #
+btn_compute = tk.Button(root, text="Compute", width=12, command=compute_grade)
+btn_compute.grid(row=8, column=0, pady=10)
+
+btn_clear = tk.Button(root, text="Clear", width=12, command=clear_fields)
+btn_clear.grid(row=8, column=1, pady=10)
+
+btn_save = tk.Button(root, text="Save Data", width=12, command=save_student)
+btn_save.grid(row=9, column=0, pady=10)
+
+btn_show = tk.Button(root, text="Show Data", width=12, command=show_data)
+btn_show.grid(row=9, column=1, pady=10)
+
+# ---------------- OUTPUT ---------------- #
+tk.Label(root, text="Average Grade:", font=("Arial", 11, "bold")).grid(row=10, column=0, pady=5)
+label_average = tk.Label(root, text="", font=("Arial", 11))
+label_average.grid(row=10, column=1)
+
+tk.Label(root, text="Numerical Value:", font=("Arial", 11, "bold")).grid(row=11, column=0)
+label_numerical = tk.Label(root, text="", font=("Arial", 11))
+label_numerical.grid(row=11, column=1)
+
+tk.Label(root, text="Remarks:", font=("Arial", 11, "bold")).grid(row=12, column=0)
+label_remark = tk.Label(root, text="", font=("Arial", 11))
+label_remark.grid(row=12, column=1)
+
+root.mainloop()
