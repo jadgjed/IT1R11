@@ -141,7 +141,7 @@ USERNAME = StringVar()
 PASSWORD = StringVar()
 
 # Title
-Label(root, text="Student Management System",
+Label(root, text="Python Crud Application",
       font=("Arial", 20, "bold"), bg="#4CAF50", fg="white", pady=10).pack(fill=X)
 
 # Frames
