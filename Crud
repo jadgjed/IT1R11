@@ -1,0 +1,202 @@
+from tkinter import *
+from tkinter import ttk, messagebox
+import sqlite3
+
+# ================= DATABASE =================
+def connect_db():
+    conn = sqlite3.connect("students.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS member (
+            mem_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            firstname TEXT,
+            lastname TEXT,
+            gender TEXT,
+            address TEXT,
+            username TEXT,
+            password TEXT
+        )
+    """)
+    return conn, cursor
+
+
+# ================= FUNCTIONS =================
+def clear_fields():
+    FIRSTNAME.set("")
+    LASTNAME.set("")
+    GENDER.set("")
+    ADDRESS.set("")
+    USERNAME.set("")
+    PASSWORD.set("")
+
+
+def validate():
+    if not all([FIRSTNAME.get(), LASTNAME.get(), GENDER.get(),
+                ADDRESS.get(), USERNAME.get(), PASSWORD.get()]):
+        messagebox.showwarning("Error", "All fields are required!")
+        return False
+    return True
+
+
+def create_data():
+    if not validate():
+        return
+
+    conn, cursor = connect_db()
+    cursor.execute("""
+        INSERT INTO member (firstname, lastname, gender, address, username, password)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (FIRSTNAME.get(), LASTNAME.get(), GENDER.get(),
+          ADDRESS.get(), USERNAME.get(), PASSWORD.get()))
+    conn.commit()
+    conn.close()
+
+    messagebox.showinfo("Success", "Data added successfully!")
+    clear_fields()
+    read_data()
+
+
+def read_data():
+    tree.delete(*tree.get_children())
+    conn, cursor = connect_db()
+
+    cursor.execute("SELECT * FROM member ORDER BY lastname ASC")
+    for row in cursor.fetchall():
+        tree.insert('', END, values=row)
+
+    conn.close()
+
+
+def update_data():
+    selected = tree.focus()
+    if not selected:
+        messagebox.showwarning("Select", "Select a record first!")
+        return
+
+    if not validate():
+        return
+
+    values = tree.item(selected, 'values')
+    mem_id = values[0]
+
+    conn, cursor = connect_db()
+    cursor.execute("""
+        UPDATE member SET firstname=?, lastname=?, gender=?,
+        address=?, username=?, password=? WHERE mem_id=?
+    """, (FIRSTNAME.get(), LASTNAME.get(), GENDER.get(),
+          ADDRESS.get(), USERNAME.get(), PASSWORD.get(), mem_id))
+
+    conn.commit()
+    conn.close()
+
+    messagebox.showinfo("Updated", "Record updated!")
+    clear_fields()
+    read_data()
+
+
+def delete_data():
+    selected = tree.focus()
+    if not selected:
+        messagebox.showwarning("Select", "Select a record first!")
+        return
+
+    values = tree.item(selected, 'values')
+    mem_id = values[0]
+
+    confirm = messagebox.askyesno("Confirm", "Delete this record?")
+    if confirm:
+        conn, cursor = connect_db()
+        cursor.execute("DELETE FROM member WHERE mem_id=?", (mem_id,))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Deleted", "Record deleted!")
+        read_data()
+
+
+def select_item(event):
+    selected = tree.focus()
+    values = tree.item(selected, 'values')
+
+    FIRSTNAME.set(values[1])
+    LASTNAME.set(values[2])
+    GENDER.set(values[3])
+    ADDRESS.set(values[4])
+    USERNAME.set(values[5])
+    PASSWORD.set(values[6])
+
+
+# ================= UI =================
+root = Tk()
+root.title("Student Management System")
+root.geometry("950x520")
+root.configure(bg="#f5f5f5")
+
+# Variables
+FIRSTNAME = StringVar()
+LASTNAME = StringVar()
+GENDER = StringVar()
+ADDRESS = StringVar()
+USERNAME = StringVar()
+PASSWORD = StringVar()
+
+# Title
+Label(root, text="Student Management System",
+      font=("Arial", 20, "bold"), bg="#4CAF50", fg="white", pady=10).pack(fill=X)
+
+# Frames
+left_frame = Frame(root, bg="#f5f5f5")
+left_frame.place(x=20, y=80)
+
+right_frame = Frame(root)
+right_frame.place(x=350, y=80)
+
+# Form Labels & Entries
+labels = ["First Name", "Last Name", "Gender", "Address", "Username", "Password"]
+
+for i, text in enumerate(labels):
+    Label(left_frame, text=text, font=("Arial", 12),
+          bg="#f5f5f5").grid(row=i, column=0, pady=5, sticky=E)
+
+Entry(left_frame, textvariable=FIRSTNAME, width=25).grid(row=0, column=1)
+Entry(left_frame, textvariable=LASTNAME, width=25).grid(row=1, column=1)
+
+# Gender
+gender_frame = Frame(left_frame, bg="#f5f5f5")
+gender_frame.grid(row=2, column=1)
+Radiobutton(gender_frame, text="Male", variable=GENDER, value="Male",
+            bg="#f5f5f5").pack(side=LEFT)
+Radiobutton(gender_frame, text="Female", variable=GENDER, value="Female",
+            bg="#f5f5f5").pack(side=LEFT)
+
+Entry(left_frame, textvariable=ADDRESS, width=25).grid(row=3, column=1)
+Entry(left_frame, textvariable=USERNAME, width=25).grid(row=4, column=1)
+Entry(left_frame, textvariable=PASSWORD, show="*", width=25).grid(row=5, column=1)
+
+# Buttons
+btn_frame = Frame(left_frame, bg="#f5f5f5")
+btn_frame.grid(row=6, columnspan=2, pady=15)
+
+Button(btn_frame, text="Create", width=10, bg="#4CAF50", fg="white", command=create_data).grid(row=0, column=0, padx=5)
+Button(btn_frame, text="Update", width=10, bg="#2196F3", fg="white", command=update_data).grid(row=0, column=1, padx=5)
+Button(btn_frame, text="Delete", width=10, bg="#f44336", fg="white", command=delete_data).grid(row=0, column=2, padx=5)
+Button(btn_frame, text="Clear", width=10, command=clear_fields).grid(row=0, column=3, padx=5)
+
+# Table
+tree = ttk.Treeview(right_frame,
+    columns=("ID", "First", "Last", "Gender", "Address", "Username", "Password"),
+    show="headings"
+)
+
+for col in tree["columns"]:
+    tree.heading(col, text=col)
+    tree.column(col, width=100)
+
+tree.pack()
+
+tree.bind("<Double-Button-1>", select_item)
+
+# Load data
+read_data()
+
+root.mainloop()
