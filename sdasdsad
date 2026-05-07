@@ -1,0 +1,418 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+# ================= LOGIN =================
+USERNAME = "admin"
+PASSWORD = "1234"
+
+# ================= MAIN APP =================
+def open_main_app():
+
+    login_window.destroy()
+
+    root = tk.Tk()
+    root.title("Student Grading System (CRUD)")
+    root.geometry("1100x600")
+    root.configure(bg="#f4f6f9")
+
+    records = []
+    selected_index = None
+
+    # ================= LEFT PANEL =================
+    left_frame = tk.Frame(root, bg="white", bd=2, relief="ridge")
+    left_frame.place(x=10, y=10, width=350, height=580)
+
+    tk.Label(
+        left_frame,
+        text="Student Form",
+        font=("Segoe UI", 16, "bold"),
+        bg="white"
+    ).pack(pady=10)
+
+    def create_entry(label):
+        tk.Label(left_frame, text=label, bg="white").pack(anchor="w", padx=20)
+
+        e = tk.Entry(left_frame)
+        e.pack(fill="x", padx=20, pady=5)
+
+        return e
+
+    entry_id = create_entry("Student ID")
+    entry_name = create_entry("Student Name")
+
+    # ================= COURSE =================
+    tk.Label(left_frame, text="Course", bg="white").pack(anchor="w", padx=20)
+
+    combo_course = ttk.Combobox(
+        left_frame,
+        values=["BSCS", "BSIT", "BSTCM", "BSDS", "BSCE"],
+        state="readonly"
+    )
+    combo_course.pack(fill="x", padx=20, pady=5)
+
+    # ================= GENDER =================
+    tk.Label(left_frame, text="Gender", bg="white").pack(anchor="w", padx=20)
+
+    gender_var = tk.StringVar()
+
+    gender_frame = tk.Frame(left_frame, bg="white")
+    gender_frame.pack(anchor="w", padx=20)
+
+    tk.Radiobutton(
+        gender_frame,
+        text="Male",
+        variable=gender_var,
+        value="Male",
+        bg="white"
+    ).pack(side="left")
+
+    tk.Radiobutton(
+        gender_frame,
+        text="Female",
+        variable=gender_var,
+        value="Female",
+        bg="white"
+    ).pack(side="left")
+
+    # ================= SUBJECT & GRADES =================
+    entry_subject = create_entry("Subject")
+    entry_prelim = create_entry("Prelim")
+    entry_midterm = create_entry("Midterm")
+    entry_final = create_entry("Final")
+
+    # ================= FUNCTIONS =================
+    def compute_grade(p, m, f):
+
+        avg = (p * 0.3) + (m * 0.3) + (f * 0.4)
+        r = round(avg)
+
+        # CONDITIONAL STATEMENTS
+        if r >= 97:
+            return avg, "1.00", "Excellent"
+
+        elif r >= 94:
+            return avg, "1.25", "Excellent"
+
+        elif r >= 91:
+            return avg, "1.50", "Very Good"
+
+        elif r >= 88:
+            return avg, "1.75", "Very Good"
+
+        elif r >= 85:
+            return avg, "2.00", "Above Average"
+
+        elif r >= 82:
+            return avg, "2.25", "Above Average"
+
+        elif r >= 79:
+            return avg, "2.50", "Average"
+
+        elif r >= 76:
+            return avg, "2.75", "Average"
+
+        elif r == 75:
+            return avg, "3.00", "Passing"
+
+        elif r >= 72:
+            return avg, "3.25", "Conditional"
+
+        elif r >= 69:
+            return avg, "3.50", "Conditional"
+
+        else:
+            return avg, "5.00", "Failed"
+
+    # ================= REFRESH TABLE =================
+    def refresh_table():
+
+        for row in tree.get_children():
+            tree.delete(row)
+
+        for i, rec in enumerate(records):
+            tree.insert("", "end", iid=i, values=rec)
+
+    # ================= ADD RECORD =================
+    def add_record():
+
+        # CONDITIONAL VALIDATION
+        if entry_id.get() == "" or entry_name.get() == "" or entry_subject.get() == "":
+            messagebox.showwarning("Warning", "Please fill in all fields")
+            return
+
+        if combo_course.get() == "":
+            messagebox.showwarning("Warning", "Please select a course")
+            return
+
+        if gender_var.get() == "":
+            messagebox.showwarning("Warning", "Please select gender")
+            return
+
+        try:
+            p = float(entry_prelim.get())
+            m = float(entry_midterm.get())
+            f = float(entry_final.get())
+
+            # CONDITIONAL FOR VALID GRADE
+            if p < 0 or p > 100 or m < 0 or m > 100 or f < 0 or f > 100:
+                messagebox.showerror("Error", "Grades must be between 0 and 100")
+                return
+
+            avg, num, rem = compute_grade(p, m, f)
+
+            records.append([
+                entry_id.get(),
+                entry_name.get(),
+                combo_course.get(),
+                gender_var.get(),
+                entry_subject.get(),
+                p,
+                m,
+                f,
+                f"{avg:.2f}",
+                num,
+                rem
+            ])
+
+            refresh_table()
+            clear_fields()
+
+            messagebox.showinfo("Success", "Record added successfully!")
+
+        except:
+            messagebox.showerror("Error", "Invalid input")
+
+    # ================= SELECT RECORD =================
+    def select_record(event):
+
+        nonlocal selected_index
+
+        selected = tree.focus()
+
+        if selected == "":
+            return
+
+        selected_index = int(selected)
+
+        rec = records[selected_index]
+
+        entry_id.delete(0, tk.END)
+        entry_id.insert(0, rec[0])
+
+        entry_name.delete(0, tk.END)
+        entry_name.insert(0, rec[1])
+
+        combo_course.set(rec[2])
+
+        gender_var.set(rec[3])
+
+        entry_subject.delete(0, tk.END)
+        entry_subject.insert(0, rec[4])
+
+        entry_prelim.delete(0, tk.END)
+        entry_prelim.insert(0, rec[5])
+
+        entry_midterm.delete(0, tk.END)
+        entry_midterm.insert(0, rec[6])
+
+        entry_final.delete(0, tk.END)
+        entry_final.insert(0, rec[7])
+
+    # ================= UPDATE RECORD =================
+    def update_record():
+
+        nonlocal selected_index
+
+        if selected_index is None:
+            messagebox.showwarning("Warning", "Select a record first")
+            return
+
+        try:
+            p = float(entry_prelim.get())
+            m = float(entry_midterm.get())
+            f = float(entry_final.get())
+
+            avg, num, rem = compute_grade(p, m, f)
+
+            records[selected_index] = [
+                entry_id.get(),
+                entry_name.get(),
+                combo_course.get(),
+                gender_var.get(),
+                entry_subject.get(),
+                p,
+                m,
+                f,
+                f"{avg:.2f}",
+                num,
+                rem
+            ]
+
+            refresh_table()
+            clear_fields()
+
+            messagebox.showinfo("Success", "Record updated successfully!")
+
+        except:
+            messagebox.showerror("Error", "Invalid input")
+
+    # ================= DELETE RECORD =================
+    def delete_record():
+
+        nonlocal selected_index
+
+        if selected_index is None:
+            messagebox.showwarning("Warning", "Select a record first")
+            return
+
+        confirm = messagebox.askyesno(
+            "Confirm Delete",
+            "Are you sure you want to delete this record?"
+        )
+
+        if confirm:
+            del records[selected_index]
+
+            refresh_table()
+            clear_fields()
+
+            selected_index = None
+
+            messagebox.showinfo("Deleted", "Record deleted successfully!")
+
+    # ================= CLEAR FIELDS =================
+    def clear_fields():
+
+        for e in [
+            entry_id,
+            entry_name,
+            entry_subject,
+            entry_prelim,
+            entry_midterm,
+            entry_final
+        ]:
+            e.delete(0, tk.END)
+
+        combo_course.set("")
+        gender_var.set("")
+
+    # ================= BUTTONS =================
+    btn_frame = tk.Frame(left_frame, bg="white")
+    btn_frame.pack(pady=10)
+
+    def btn(text, cmd, color):
+
+        return tk.Button(
+            btn_frame,
+            text=text,
+            command=cmd,
+            bg=color,
+            fg="white",
+            width=10,
+            bd=0,
+            font=("Segoe UI", 9, "bold")
+        )
+
+    btn("Add", add_record, "#28a745").grid(row=0, column=0, padx=5)
+    btn("Update", update_record, "#007bff").grid(row=0, column=1, padx=5)
+    btn("Delete", delete_record, "#dc3545").grid(row=0, column=2, padx=5)
+    btn("Clear", clear_fields, "#6c757d").grid(row=0, column=3, padx=5)
+
+    # ================= RIGHT PANEL =================
+    right_frame = tk.Frame(root, bg="white", bd=2, relief="ridge")
+    right_frame.place(x=370, y=10, width=720, height=580)
+
+    tk.Label(
+        right_frame,
+        text="Student Records",
+        font=("Segoe UI", 16, "bold"),
+        bg="white"
+    ).pack(pady=10)
+
+    table_frame = tk.Frame(right_frame)
+    table_frame.pack(fill="both", expand=True)
+
+    # ================= SCROLLBARS =================
+    scroll_y = tk.Scrollbar(table_frame, orient="vertical")
+    scroll_x = tk.Scrollbar(table_frame, orient="horizontal")
+
+    cols = (
+        "ID",
+        "Name",
+        "Course",
+        "Gender",
+        "Subject",
+        "Prelim",
+        "Midterm",
+        "Final",
+        "Average",
+        "Num",
+        "Remark"
+    )
+
+    tree = ttk.Treeview(
+        table_frame,
+        columns=cols,
+        show="headings",
+        yscrollcommand=scroll_y.set,
+        xscrollcommand=scroll_x.set
+    )
+
+    scroll_y.config(command=tree.yview)
+    scroll_x.config(command=tree.xview)
+
+    scroll_y.pack(side="right", fill="y")
+    scroll_x.pack(side="bottom", fill="x")
+
+    tree.pack(fill="both", expand=True)
+
+    for col in cols:
+        tree.heading(col, text=col)
+        tree.column(col, width=110, anchor="center")
+
+    tree.bind("<<TreeviewSelect>>", select_record)
+
+    root.mainloop()
+
+# ================= LOGIN WINDOW =================
+login_window = tk.Tk()
+
+login_window.title("Login")
+login_window.geometry("300x200")
+login_window.resizable(False, False)
+
+tk.Label(login_window, text="Username").pack(pady=5)
+
+entry_user = tk.Entry(login_window)
+entry_user.pack()
+
+tk.Label(login_window, text="Password").pack(pady=5)
+
+entry_pass = tk.Entry(login_window, show="*")
+entry_pass.pack()
+
+# ================= LOGIN FUNCTION =================
+def login():
+
+    if entry_user.get() == USERNAME and entry_pass.get() == PASSWORD:
+
+        messagebox.showinfo("Login Success", "Welcome Admin!")
+
+        open_main_app()
+
+    else:
+        messagebox.showerror(
+            "Login Failed",
+            "Invalid username or password"
+        )
+
+# ================= LOGIN BUTTON =================
+tk.Button(
+    login_window,
+    text="Login",
+    command=login,
+    bg="green",
+    fg="white"
+).pack(pady=15)
+
+login_window.mainloop()
