@@ -1,0 +1,501 @@
+# =========================================
+# Pull-Down Menu Example with File Handling
+# =========================================
+
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
+# Create Window
+root = tk.Tk()
+root.title("Pull-Down Menu Example")
+root.geometry("900x550")
+
+# =========================================
+# TEXT AREA
+# =========================================
+text_area = tk.Text(root, wrap="word", font=("Consolas", 12))
+text_area.pack(expand=True, fill="both")
+
+
+# =========================================
+# FILE MENU FUNCTIONS
+# =========================================
+
+def new_file():
+    text_area.delete(1.0, tk.END)
+
+
+def open_file():
+    file_path = filedialog.askopenfilename(
+        filetypes=[
+            ("Python Files", "*.py"),
+            ("Text Files", "*.txt"),
+            ("All Files", "*.*")
+        ]
+    )
+
+    if file_path:
+        with open(file_path, "r") as file:
+            content = file.read()
+
+        text_area.delete(1.0, tk.END)
+        text_area.insert(tk.END, content)
+
+
+def save_file():
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".txt",
+        filetypes=[
+            ("Text Files", "*.txt"),
+            ("Python Files", "*.py"),
+            ("All Files", "*.*")
+        ]
+    )
+
+    if file_path:
+        with open(file_path, "w") as file:
+            file.write(text_area.get(1.0, tk.END))
+
+        messagebox.showinfo("Saved", "File saved successfully!")
+
+
+def exit_program():
+    root.destroy()
+
+
+# =========================================
+# ACTIVITY 1
+# BACKGROUND INFORMATION
+# =========================================
+
+def background_information():
+    code = '''
+student_id = "2025301836"
+student_name = "Jewel Adrian G. Dacobor"
+course = "BS Information Technology"
+year_level = "1st Year"
+
+print("STUDENT INFORMATION")
+print("-------------------")
+print("Student ID :", student_id)
+print("Name       :", student_name)
+print("Course     :", course)
+print("Year Level :", year_level)
+'''
+
+    output = '''
+OUTPUT:
+
+STUDENT INFORMATION
+-------------------
+Student ID : 2025301836
+Name       : Jewel Adrian G. Dacobor
+Course     : BS Information Technology
+Year Level : 1st Year
+'''
+
+    text_area.delete(1.0, tk.END)
+
+    text_area.insert(tk.END, "ACTIVITY 1 - BACKGROUND INFORMATION\n")
+    text_area.insert(tk.END, "===================================\n\n")
+
+    text_area.insert(tk.END, code)
+    text_area.insert(tk.END, output)
+
+
+# =========================================
+# ACTIVITY 2
+# TOTAL SALES AMOUNT
+# =========================================
+
+def total_sales_activity():
+    code = '''
+cust_no = input("Enter Customer Number: ")
+cust_name = input("Enter Customer Name: ")
+item_desc = input("Enter Item Description: ")
+
+price = float(input("Enter Price of Item: "))
+quantity = int(input("Enter Quantity Purchased: "))
+
+total = price * quantity
+
+print("TOTAL SALES AMOUNT")
+print("------------------")
+print("Customer Number    :", cust_no)
+print("Customer Name      :", cust_name)
+print("Item Description   :", item_desc)
+print("Total Sales Amount :", total)
+'''
+
+    output = '''
+OUTPUT SAMPLE:
+
+TOTAL SALES AMOUNT
+------------------
+Customer Number    : 1001
+Customer Name      : Jewel Adrian
+Item Description   : Keyboard
+Total Sales Amount : 2500.0
+'''
+
+    text_area.delete(1.0, tk.END)
+
+    text_area.insert(tk.END, "ACTIVITY 2 - TOTAL SALES AMOUNT\n")
+    text_area.insert(tk.END, "================================\n\n")
+
+    text_area.insert(tk.END, code)
+    text_area.insert(tk.END, output)
+
+
+# =========================================
+# ACTIVITY 3
+# STUDENT GRADE COMPUTATION
+# =========================================
+
+def student_grade_activity():
+    code = '''
+while True:
+    ID = input("What is your Student ID: ")
+    Name = input("What is your name: ")
+    Course = input("Enter your Course: ")
+    Subject = input("What is the subject: ")
+    Prelim = int(input("Enter your Preliminary Exam Grades: "))
+    Midterm = int(input("Enter your Midterm Exam Grades: "))
+    Final = int(input("Enter your Final Exam Grades: "))
+
+    Average = (Prelim * 0.20) + (Midterm * 0.30) + (Final * 0.50)
+
+    print("------------------------")
+    print("Student ID: ", ID)
+    print("Student Name: ", Name)
+    print("Student Course: ", Course)
+    print("Student Subject: ", Subject)
+    print("Preliminary Exam Grade: ", Prelim)
+    print("Midterm Exam Grade: ", Midterm)
+    print("Final Exam Grade: ", Final)
+    print(f"General Weighted Average: {Average:.2f}: ")
+
+    if Average >= 75:
+        print("Remarks: PASSED")
+    else:
+        print("Remarks: FAILED")
+
+    print("------------------------")
+
+    choice = input("Do you want to enter another student profile? (yes/no): ")
+
+    if choice == 'no':
+        print("Program Terminated. Thanks for using!!")
+        break
+'''
+
+    output = '''
+OUTPUT SAMPLE:
+
+------------------------
+Student ID: 2025301836
+Student Name: Jewel Adrian
+Student Course: BSIT
+Student Subject: Programming
+Preliminary Exam Grade: 85
+Midterm Exam Grade: 87
+Final Exam Grade: 90
+General Weighted Average: 88.10
+Remarks: PASSED
+------------------------
+'''
+
+    text_area.delete(1.0, tk.END)
+
+    text_area.insert(tk.END, "ACTIVITY 3 - STUDENT GRADE COMPUTATION\n")
+    text_area.insert(tk.END, "======================================\n\n")
+
+    text_area.insert(tk.END, code)
+    text_area.insert(tk.END, output)
+
+#ACTIVITY 4
+
+def student_grading_gui():
+    import tkinter as tk
+    from tkinter import messagebox
+
+    win = tk.Toplevel(root)
+    win.title("Activity 4 - Student Grading GUI")
+    win.geometry("400x500")
+
+    # Labels + Entries
+    tk.Label(win, text="Student ID").pack()
+    id_entry = tk.Entry(win)
+    id_entry.pack()
+
+    tk.Label(win, text="Name").pack()
+    name_entry = tk.Entry(win)
+    name_entry.pack()
+
+    tk.Label(win, text="Course").pack()
+    course_entry = tk.Entry(win)
+    course_entry.pack()
+
+    tk.Label(win, text="Subject").pack()
+    subject_entry = tk.Entry(win)
+    subject_entry.pack()
+
+    tk.Label(win, text="Prelim Grade").pack()
+    prelim_entry = tk.Entry(win)
+    prelim_entry.pack()
+
+    tk.Label(win, text="Midterm Grade").pack()
+    midterm_entry = tk.Entry(win)
+    midterm_entry.pack()
+
+    tk.Label(win, text="Final Grade").pack()
+    final_entry = tk.Entry(win)
+    final_entry.pack()
+
+    result_label = tk.Label(win, text="", fg="blue")
+    result_label.pack(pady=10)
+
+    def compute_grade():
+        try:
+            ID = id_entry.get()
+            Name = name_entry.get()
+            Course = course_entry.get()
+            Subject = subject_entry.get()
+
+            Prelim = float(prelim_entry.get())
+            Midterm = float(midterm_entry.get())
+            Final = float(final_entry.get())
+
+            Average = (Prelim * 0.20) + (Midterm * 0.30) + (Final * 0.50)
+
+            remarks = "PASSED" if Average >= 75 else "FAILED"
+
+            result_text = f"""
+Student ID: {ID}
+Name: {Name}
+Course: {Course}
+Subject: {Subject}
+
+Prelim: {Prelim}
+Midterm: {Midterm}
+Final: {Final}
+
+GWA: {Average:.2f}
+Remarks: {remarks}
+"""
+            result_label.config(text=result_text)
+
+        except ValueError:
+            messagebox.showerror("Error", "Please enter valid numeric grades!")
+
+    tk.Button(win, text="Compute Grade", command=compute_grade).pack(pady=10)
+
+#Activity 5
+
+def payroll_system_gui():
+    import tkinter as tk
+    from tkinter import messagebox
+
+    win = tk.Toplevel(root)
+    win.title("Activity 5 - Payroll System")
+    win.geometry("750x600")
+    win.config(bg="#1e1e2f")
+
+    # ---------------- FUNCTIONS ---------------- #
+
+    def compute_payroll():
+        try:
+            emp_no = entry_emp_no.get()
+            emp_name = entry_emp_name.get()
+
+            rate = float(entry_rate.get())
+            days = float(entry_days.get())
+            sss = float(entry_sss.get())
+            philhealth = float(entry_philhealth.get())
+            cash = float(entry_cash.get())
+
+            if emp_no == "" or emp_name == "":
+                messagebox.showerror("Error", "Fill all required fields")
+                return
+
+            gross = rate * days
+            deductions = sss + philhealth + cash
+            net = gross - deductions
+
+            lbl_gross.config(text=f"{gross:,.2f}")
+            lbl_deductions.config(text=f"{deductions:,.2f}")
+            lbl_net.config(text=f"{net:,.2f}")
+
+        except ValueError:
+            messagebox.showerror("Error", "Invalid numeric input")
+
+    def clear_fields():
+        entry_emp_no.delete(0, tk.END)
+        entry_emp_name.delete(0, tk.END)
+        entry_rate.delete(0, tk.END)
+        entry_days.delete(0, tk.END)
+        entry_sss.delete(0, tk.END)
+        entry_philhealth.delete(0, tk.END)
+        entry_cash.delete(0, tk.END)
+
+        lbl_gross.config(text="0.00")
+        lbl_deductions.config(text="0.00")
+        lbl_net.config(text="0.00")
+
+    # ---------------- UI ---------------- #
+
+    tk.Label(win, text="PAYROLL SYSTEM",
+             font=("Segoe UI", 18, "bold"),
+             bg="#1e1e2f", fg="white").pack(pady=10)
+
+    frame = tk.Frame(win, bg="#2c2f4a")
+    frame.pack(padx=20, pady=10, fill="both", expand=True)
+
+    # Employee Info
+    info = tk.LabelFrame(frame, text="Employee Information",
+                          bg="#2c2f4a", fg="white")
+    info.pack(fill="x", padx=10, pady=10)
+
+    tk.Label(info, text="Employee No", bg="#2c2f4a", fg="white").grid(row=0, column=0)
+    entry_emp_no = tk.Entry(info)
+    entry_emp_no.grid(row=0, column=1)
+
+    tk.Label(info, text="Name", bg="#2c2f4a", fg="white").grid(row=1, column=0)
+    entry_emp_name = tk.Entry(info)
+    entry_emp_name.grid(row=1, column=1)
+
+    tk.Label(info, text="Rate/Day", bg="#2c2f4a", fg="white").grid(row=2, column=0)
+    entry_rate = tk.Entry(info)
+    entry_rate.grid(row=2, column=1)
+
+    tk.Label(info, text="Days Worked", bg="#2c2f4a", fg="white").grid(row=3, column=0)
+    entry_days = tk.Entry(info)
+    entry_days.grid(row=3, column=1)
+
+    # Deductions
+    ded = tk.LabelFrame(frame, text="Deductions",
+                        bg="#2c2f4a", fg="white")
+    ded.pack(fill="x", padx=10, pady=10)
+
+    tk.Label(ded, text="SSS", bg="#2c2f4a", fg="white").grid(row=0, column=0)
+    entry_sss = tk.Entry(ded)
+    entry_sss.grid(row=0, column=1)
+
+    tk.Label(ded, text="PhilHealth", bg="#2c2f4a", fg="white").grid(row=1, column=0)
+    entry_philhealth = tk.Entry(ded)
+    entry_philhealth.grid(row=1, column=1)
+
+    tk.Label(ded, text="Cash Advance", bg="#2c2f4a", fg="white").grid(row=2, column=0)
+    entry_cash = tk.Entry(ded)
+    entry_cash.grid(row=2, column=1)
+
+    # Results
+    res = tk.LabelFrame(frame, text="Results",
+                        bg="#2c2f4a", fg="white")
+    res.pack(fill="x", padx=10, pady=10)
+
+    tk.Label(res, text="Gross Pay:", fg="#00ffcc", bg="#2c2f4a").grid(row=0, column=0)
+    lbl_gross = tk.Label(res, text="0.00", fg="#00ffcc", bg="#2c2f4a")
+    lbl_gross.grid(row=0, column=1)
+
+    tk.Label(res, text="Deductions:", fg="#ffcc00", bg="#2c2f4a").grid(row=1, column=0)
+    lbl_deductions = tk.Label(res, text="0.00", fg="#ffcc00", bg="#2c2f4a")
+    lbl_deductions.grid(row=1, column=1)
+
+    tk.Label(res, text="Net Pay:", fg="#00ff66", bg="#2c2f4a").grid(row=2, column=0)
+    lbl_net = tk.Label(res, text="0.00", fg="#00ff66", bg="#2c2f4a")
+    lbl_net.grid(row=2, column=1)
+
+    # Buttons
+    btn = tk.Frame(frame, bg="#2c2f4a")
+    btn.pack(pady=10)
+
+    tk.Button(btn, text="Compute", bg="green", fg="white",
+              command=compute_payroll).grid(row=0, column=0, padx=5)
+
+    tk.Button(btn, text="Clear", bg="blue", fg="white",
+              command=clear_fields).grid(row=0, column=1, padx=5)
+
+    tk.Button(btn, text="Exit", bg="red", fg="white",
+              command=win.destroy).grid(row=0, column=2, padx=5)
+
+# =========================================
+# HELP MENU
+# =========================================
+
+def about_me():
+    text_area.delete(1.0, tk.END)
+
+    about_text = '''
+HELP / ABOUT ME
+================
+
+Hello There My Friend
+
+My name is Jewel Adrian Dacobor from IT1R11
+'''
+
+    text_area.insert(tk.END, about_text)
+
+
+# =========================================
+# MENU BAR
+# =========================================
+
+menu_bar = tk.Menu(root)
+
+# FILE MENU
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="New", command=new_file)
+file_menu.add_command(label="Open", command=open_file)
+file_menu.add_command(label="Save", command=save_file)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=exit_program)
+
+menu_bar.add_cascade(label="File", menu=file_menu)
+
+# ACTIVITIES MENU
+activities_menu = tk.Menu(menu_bar, tearoff=0)
+
+activities_menu.add_command(
+    label="Activity 1 - Background Information",
+    command=background_information
+)
+
+activities_menu.add_command(
+    label="Activity 2 - Total Sales Amount",
+    command=total_sales_activity
+)
+
+activities_menu.add_command(
+    label="Activity 3 - Student Grade Computation",
+    command=student_grade_activity
+)
+
+activities_menu.add_command(
+    label="Activity 4 - Student Grading GUI",
+    command=student_grading_gui
+)
+
+activities_menu.add_command(
+    label="Activity 5 - Payroll System",
+    command=payroll_system_gui
+)
+
+menu_bar.add_cascade(label="Activities", menu=activities_menu)
+
+# HELP MENU
+help_menu = tk.Menu(menu_bar, tearoff=0)
+
+help_menu.add_command(
+    label="About Me",
+    command=about_me
+)
+
+menu_bar.add_cascade(label="Help", menu=help_menu)
+
+# Display Menu
+root.config(menu=menu_bar)
+
+# Run Program
+root.mainloop()
